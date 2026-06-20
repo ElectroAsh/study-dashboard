@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
-import Design1 from "./Design1";
-import Design2 from "./Design2";
-import Design3 from "./Design3";
+import Dashboard from "./Dashboard";
 
 const STATIC_EVENTS = [
   { date: "2026-06-20", title: "Peak Chem", subject: "Chemistry", type: "Tutoring", time: "1:00–3:00pm" },
@@ -31,7 +29,6 @@ const STATIC_HANDOFF = {
 };
 
 export default function App() {
-  const [design, setDesign] = useState(1);
   const [events, setEvents] = useState(STATIC_EVENTS);
   const [handoff, setHandoff] = useState(STATIC_HANDOFF);
   const [loading, setLoading] = useState(true);
@@ -49,49 +46,11 @@ export default function App() {
     fetchData();
   }, []);
 
-  const designs = [
-    { id: 1, label: "Midnight Pro" },
-    { id: 2, label: "Aurora" },
-    { id: 3, label: "Clean Slate" },
-  ];
-
-  const props = { events, handoff };
-
-  return (
-    <div style={{ fontFamily: "'Inter',system-ui,sans-serif", minHeight: "100vh" }}>
-      {/* Design switcher */}
-      <div style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 999,
-        display: "flex", justifyContent: "center", padding: "12px",
-        background: design === 3 ? "rgba(255,255,255,0.85)" : "rgba(10,10,18,0.85)",
-        backdropFilter: "blur(12px)",
-        borderBottom: design === 3 ? "1px solid #e2e8f0" : "1px solid #1e1e30",
-      }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: design === 3 ? "#94a3b8" : "#475569", letterSpacing: 2, textTransform: "uppercase", marginRight: 8 }}>Design</span>
-          {designs.map(d => (
-            <button key={d.id} onClick={() => setDesign(d.id)} style={{
-              padding: "7px 18px", borderRadius: 99, border: "none", cursor: "pointer",
-              fontSize: 12, fontWeight: 600, letterSpacing: 0.3, transition: "all 0.2s",
-              background: design === d.id ? "#3b82f6" : design === 3 ? "#f1f5f9" : "#1e1e30",
-              color: design === d.id ? "#fff" : design === 3 ? "#64748b" : "#64748b",
-              boxShadow: design === d.id ? "0 2px 12px #3b82f655" : "none",
-            }}>{d.label}</button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ paddingTop: 56 }}>
-        {loading ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "80vh", color: "#64748b" }}>Loading...</div>
-        ) : (
-          <>
-            {design === 1 && <Design1 {...props} />}
-            {design === 2 && <Design2 {...props} />}
-            {design === 3 && <Design3 {...props} />}
-          </>
-        )}
-      </div>
+  if (loading) return (
+    <div style={{ fontFamily: "'Inter',system-ui,sans-serif", background: "#f8fafc", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ fontSize: 14, color: "#94a3b8" }}>Loading...</div>
     </div>
   );
+
+  return <Dashboard events={events} handoff={handoff} />;
 }
