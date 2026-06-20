@@ -61,71 +61,67 @@ export default function Dashboard({ events: initialEvents, handoff }) {
 
   const col = (subj) => SUBJECT_COLORS[subj] || DEFAULT_COLOR;
 
-  // Aurora card style — but light/clean colours
   const card = {
     background: "#ffffff",
     border: "1px solid #e2e8f0",
     borderRadius: 20,
     padding: 22,
+    boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
   };
 
-  return (
-    <div style={{ background: "#f8fafc", minHeight: "100vh", padding: "24px 28px", color: "#0f172a", fontFamily: "'Inter',system-ui,sans-serif", position: "relative" }}>
+  const label = { fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 };
 
-      {/* Subtle background blobs — Clean Slate colours */}
-      <div style={{ position: "fixed", top: -100, right: -100, width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, #dbeafe55, transparent 70%)", pointerEvents: "none" }}/>
-      <div style={{ position: "fixed", bottom: -100, left: -100, width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, #f0fdf455, transparent 70%)", pointerEvents: "none" }}/>
+  return (
+    <div style={{ background: "#f1f5f9", minHeight: "100vh", padding: "28px 32px", color: "#0f172a", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, color: "#3b82f6" }}>Study Dashboard · Year 11 2026</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: "#0f172a" }}>
-              {today.getHours() < 12 ? "Good morning" : today.getHours() < 17 ? "Good afternoon" : "Good evening"}, Dhigash 👋
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 5, color: "#3b82f6" }}>Year 11 · 2026</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", letterSpacing: -0.5 }}>
+            {today.getHours() < 12 ? "Good morning" : today.getHours() < 17 ? "Good afternoon" : "Good evening"}, Dhigash 👋
+          </div>
+          <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 3 }}>
+            {today.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          </div>
+        </div>
+
+        {/* Countdown */}
+        {nextExam && (
+          <div style={{ background: urgencyBg(nextExam.daysLeft), border: `1px solid ${urgencyColor(nextExam.daysLeft)}33`, borderRadius: 18, padding: "16px 24px", textAlign: "center" }}>
+            <div style={{ fontSize: 10, color: urgencyColor(nextExam.daysLeft), fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8 }}>
+              {nextExam.title.replace("⚠️ ","")}
             </div>
-            <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>
-              {today.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}>
+              {[
+                { val: nextExam.daysLeft, label: "d" },
+                { val: nextExam.hours, label: "h" },
+                { val: nextExam.mins, label: "m" },
+                { val: nextExam.secs, label: "s" },
+              ].map((seg, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 1 }}>
+                  <span style={{ fontSize: 24, fontWeight: 800, color: urgencyColor(nextExam.daysLeft), fontVariantNumeric: "tabular-nums" }}>{pad(seg.val)}</span>
+                  <span style={{ fontSize: 9, color: urgencyColor(nextExam.daysLeft), fontWeight: 700, opacity: 0.6 }}>{seg.label}</span>
+                  {i < 3 && <span style={{ fontSize: 18, color: urgencyColor(nextExam.daysLeft), opacity: 0.25, margin: "0 3px" }}>:</span>}
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Live countdown — next exam */}
-          {nextExam && (
-            <div style={{ background: urgencyBg(nextExam.daysLeft), border: `1px solid ${urgencyColor(nextExam.daysLeft)}33`, borderRadius: 16, padding: "14px 20px", textAlign: "center", minWidth: 200 }}>
-              <div style={{ fontSize: 10, color: urgencyColor(nextExam.daysLeft), fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
-                {nextExam.title.replace("⚠️ ","")}
-              </div>
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "baseline", gap: 6 }}>
-                {[
-                  { val: nextExam.daysLeft, label: "d" },
-                  { val: nextExam.hours, label: "h" },
-                  { val: nextExam.mins, label: "m" },
-                  { val: nextExam.secs, label: "s" },
-                ].map((seg, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 1 }}>
-                    <span style={{ fontSize: 22, fontWeight: 800, color: urgencyColor(nextExam.daysLeft), fontVariantNumeric: "tabular-nums" }}>{pad(seg.val)}</span>
-                    <span style={{ fontSize: 9, color: urgencyColor(nextExam.daysLeft), fontWeight: 700, opacity: 0.7 }}>{seg.label}</span>
-                    {i < 3 && <span style={{ fontSize: 16, color: urgencyColor(nextExam.daysLeft), opacity: 0.3, margin: "0 1px" }}>:</span>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
-      {/* Row 1: Calendar + Day panel + Countdown */}
+      {/* Row 1: Calendar + right column */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
 
         {/* Calendar */}
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <button onClick={() => month===0?(setMonth(11),setYear(y=>y-1)):setMonth(m=>m-1)} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: 10, width: 32, height: 32, cursor: "pointer", fontSize: 16 }}>‹</button>
-            <div style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{MONTHS[month]} {year}</div>
-            <button onClick={() => month===11?(setMonth(0),setYear(y=>y+1)):setMonth(m=>m+1)} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: 10, width: 32, height: 32, cursor: "pointer", fontSize: 16 }}>›</button>
+            <button onClick={() => month===0?(setMonth(11),setYear(y=>y-1)):setMonth(m=>m-1)} style={{ background: "#f1f5f9", border: "none", color: "#64748b", borderRadius: 8, width: 30, height: 30, cursor: "pointer", fontSize: 16 }}>‹</button>
+            <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>{MONTHS[month]} {year}</div>
+            <button onClick={() => month===11?(setMonth(0),setYear(y=>y+1)):setMonth(m=>m+1)} style={{ background: "#f1f5f9", border: "none", color: "#64748b", borderRadius: 8, width: 30, height: 30, cursor: "pointer", fontSize: 16 }}>›</button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2, marginBottom: 6 }}>
-            {DAYS.map(d => <div key={d} style={{ textAlign: "center", fontSize: 10, color: "#cbd5e1", fontWeight: 600 }}>{d[0]}</div>)}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2, marginBottom: 4 }}>
+            {DAYS.map(d => <div key={d} style={{ textAlign: "center", fontSize: 10, color: "#cbd5e1", fontWeight: 700 }}>{d[0]}</div>)}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 3 }}>
             {cells.map((day, idx) => {
@@ -137,17 +133,17 @@ export default function Dashboard({ events: initialEvents, handoff }) {
               const hasExam = evts.some(e => e.type === "Assessment");
               return (
                 <div key={dateStr} onClick={() => setSelected(dateStr)} style={{
-                  borderRadius: 10, padding: "7px 3px 5px", minHeight: 52, cursor: "pointer", position: "relative",
+                  borderRadius: 10, padding: "7px 3px 5px", minHeight: 50, cursor: "pointer", position: "relative",
                   background: isSel ? "#0f172a" : isToday ? "#eff6ff" : "#f8fafc",
-                  border: isToday&&!isSel ? "1.5px solid #bfdbfe" : isSel ? "1.5px solid #0f172a" : "1.5px solid #e2e8f0",
-                  boxShadow: isSel ? "0 4px 12px rgba(15,23,42,0.15)" : "none",
+                  border: isToday&&!isSel ? "1.5px solid #bfdbfe" : "1.5px solid transparent",
+                  boxShadow: isSel ? "0 4px 12px rgba(15,23,42,0.18)" : "none",
                   transition: "all 0.12s",
                 }}>
                   <div style={{ fontSize: 12, fontWeight: isSel||isToday?700:400, color: isSel?"#fff":isToday?"#2563eb":"#64748b", textAlign: "center", marginBottom: 3 }}>{day}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
                     {evts.slice(0,3).map((e,i) => {
                       const c = col(e.subject);
-                      return <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: isSel?"rgba(255,255,255,0.6)":e.type==="Assessment"?"#ef4444":c.dot }}/>;
+                      return <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: isSel?"rgba(255,255,255,0.55)":e.type==="Assessment"?"#ef4444":c.dot }}/>;
                     })}
                   </div>
                   {hasExam&&!isSel&&<div style={{ position:"absolute",top:3,right:3,width:5,height:5,borderRadius:"50%",background:"#ef4444",boxShadow:"0 0 5px #ef4444" }}/>}
@@ -155,7 +151,6 @@ export default function Dashboard({ events: initialEvents, handoff }) {
               );
             })}
           </div>
-          {/* Legend */}
           <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
             {Object.entries(SUBJECT_COLORS).map(([s,c]) => (
               <div key={s} style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -166,57 +161,62 @@ export default function Dashboard({ events: initialEvents, handoff }) {
           </div>
         </div>
 
-        {/* Right column: day + assessments stacked */}
+        {/* Right: selected day + assessments */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Selected day */}
           <div style={{ ...card, flex: 1 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>
+            <div style={label}>
               {new Date(selected+"T12:00:00").toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" })}
             </div>
             {selEvts.length === 0
-              ? <div style={{ color: "#e2e8f0", fontSize: 13, textAlign: "center", paddingTop: 12 }}>
-                  <div style={{ fontSize: 24, marginBottom: 6 }}>🙌</div>
+              ? <div style={{ color: "#cbd5e1", fontSize: 13, textAlign: "center", paddingTop: 16 }}>
+                  <div style={{ fontSize: 28, marginBottom: 6 }}>🙌</div>
                   Nothing on
                   <div style={{ marginTop: 10 }}>
-                    <button onClick={() => setAddEventOpen(true)} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, padding: "5px 12px", fontSize: 11, fontWeight: 600, color: "#64748b", cursor: "pointer" }}>+ Add event</button>
+                    <button onClick={() => setAddEventOpen(true)} style={{ background: "#f1f5f9", border: "none", borderRadius: 8, padding: "5px 12px", fontSize: 11, fontWeight: 600, color: "#64748b", cursor: "pointer" }}>+ Add event</button>
                   </div>
                 </div>
-              : <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {selEvts.map((e, i) => {
+              : <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                  {selEvts.map((e,i) => {
                     const c = col(e.subject);
                     const isExam = e.type === "Assessment";
                     return (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: isExam?"#fff5f5":"#f8fafc", border: `1px solid ${isExam?"#fecaca":"#e2e8f0"}`, borderRadius: 10 }}>
-                        <div style={{ width: 3, height: 36, borderRadius: 99, background: isExam?"#ef4444":c.dot, flexShrink: 0 }}/>
-                        <div>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: isExam?"#dc2626":"#0f172a" }}>{e.title.replace("⚠️ ","")}</div>
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", background: isExam?"#fff5f5":"#f8fafc", border: `1px solid ${isExam?"#fecaca":"#e2e8f0"}`, borderRadius: 10 }}>
+                        <div style={{ width: 3, height: 32, borderRadius: 99, background: isExam?"#ef4444":c.dot, flexShrink: 0 }}/>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: isExam?"#dc2626":"#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.title.replace("⚠️ ","")}</div>
                           <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 1 }}>{e.subject}{e.time&&` · ${e.time}`}</div>
                         </div>
-                        <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, color: isExam?"#ef4444":"#94a3b8", background: isExam?"#fee2e2":"#f1f5f9", padding: "2px 7px", borderRadius: 99, letterSpacing: 0.5 }}>{e.type.toUpperCase()}</span>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: isExam?"#ef4444":"#94a3b8", background: isExam?"#fee2e2":"#f1f5f9", padding: "2px 7px", borderRadius: 99, letterSpacing: 0.5, flexShrink: 0 }}>{e.type.toUpperCase()}</span>
                       </div>
                     );
                   })}
-                  <button onClick={() => setAddEventOpen(true)} style={{ background: "#fff", border: "1.5px dashed #e2e8f0", borderRadius: 10, padding: "7px", fontSize: 11, color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>+ Add event</button>
+                  <button onClick={() => setAddEventOpen(true)} style={{ background: "transparent", border: "1.5px dashed #e2e8f0", borderRadius: 10, padding: "7px", fontSize: 11, color: "#94a3b8", cursor: "pointer", fontWeight: 600, marginTop: 2 }}>+ Add event</button>
                 </div>
             }
           </div>
 
-          {/* Assessment countdown — Aurora progress bars, clean colours */}
+          {/* Assessments — matching countdown card style */}
           <div style={card}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>Assessments</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {assessments.map((a, i) => {
+            <div style={label}>Upcoming Assessments</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {assessments.map((a,i) => {
                 const urg = urgencyColor(a.daysLeft);
-                const pct = Math.max(0, Math.min(100, (1 - a.daysLeft/14)*100));
+                const ugBg = urgencyBg(a.daysLeft);
                 return (
-                  <div key={i} onClick={() => setSelected(a.date)} style={{ cursor: "pointer" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ fontSize: 11, color: "#475569", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{a.title.replace("⚠️ ","")}</span>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: urg, flexShrink: 0, marginLeft: 8 }}>{a.daysLeft}d</span>
+                  <div key={i} onClick={() => setSelected(a.date)} style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+                    {/* Day counter box — same style as main countdown */}
+                    <div style={{ background: ugBg, border: `1px solid ${urg}33`, borderRadius: 12, padding: "8px 10px", textAlign: "center", flexShrink: 0, minWidth: 48 }}>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: urg, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{a.daysLeft}</div>
+                      <div style={{ fontSize: 8, color: urg, fontWeight: 700, opacity: 0.7, textTransform: "uppercase", marginTop: 1 }}>days</div>
                     </div>
-                    <div style={{ height: 4, background: "#f1f5f9", borderRadius: 99, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, background: `linear-gradient(90deg, ${urg}, ${urg}88)`, borderRadius: 99 }}/>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.title.replace("⚠️ ","")}</div>
+                      <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>{a.subject} · {new Date(a.date+"T12:00:00").toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" })}</div>
+                    </div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: urg, background: ugBg, padding: "3px 8px", borderRadius: 99, letterSpacing: 0.5, flexShrink: 0 }}>
+                      {a.daysLeft === 0 ? "TODAY" : a.daysLeft === 1 ? "TOMORROW" : `${a.daysLeft}d`}
                     </div>
                   </div>
                 );
@@ -227,65 +227,66 @@ export default function Dashboard({ events: initialEvents, handoff }) {
       </div>
 
       {/* Row 2: Priority + Tasks */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.3fr 0.7fr", gap: 16, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 16, marginBottom: 16 }}>
 
         {/* Priority */}
         <div style={card}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🎯 Priority Focus</div>
+          <div style={label}>🎯 Priority Focus</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ background: "#fff5f5", border: "1px solid #fecaca", borderLeft: "3px solid #ef4444", borderRadius: 12, padding: 14 }}>
-              <div style={{ fontSize: 9, color: "#ef4444", fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>#1 · {handoff.priority_days}D · {handoff.priority_subject?.toUpperCase()}</div>
+              <div style={{ fontSize: 9, color: "#ef4444", fontWeight: 800, letterSpacing: 1.5, marginBottom: 5 }}>#1 CRITICAL · {handoff.priority_days}D · {handoff.priority_subject?.toUpperCase()}</div>
               <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{handoff.priority_focus}</div>
             </div>
             {handoff.secondary_focus && (
               <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderLeft: "3px solid #f97316", borderRadius: 12, padding: 14 }}>
-                <div style={{ fontSize: 9, color: "#f97316", fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>#2 · {handoff.secondary_days}D · {handoff.secondary_subject?.toUpperCase()}</div>
+                <div style={{ fontSize: 9, color: "#f97316", fontWeight: 800, letterSpacing: 1.5, marginBottom: 5 }}>#2 HIGH · {handoff.secondary_days}D · {handoff.secondary_subject?.toUpperCase()}</div>
                 <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{handoff.secondary_focus}</div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Tasks */}
-        <div style={card}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 10 }}>📋 Tasks</div>
-          {/* Progress */}
-          <div style={{ marginBottom: 10 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ fontSize: 10, color: "#94a3b8" }}>Progress</span>
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e" }}>{completedTasks}/{totalTasks}</span>
-            </div>
-            <div style={{ height: 4, background: "#f1f5f9", borderRadius: 99, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${totalTasks?(completedTasks/totalTasks)*100:0}%`, background: "linear-gradient(90deg,#22c55e,#16a34a)", borderRadius: 99, transition: "width 0.3s" }}/>
-            </div>
+        {/* Tasks — more prominent */}
+        <div style={{ ...card, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={label}>📋 Tasks</div>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#22c55e" }}>{completedTasks}/{totalTasks}</span>
           </div>
-          {/* Add task */}
-          <div style={{ display: "flex", gap: 5, marginBottom: 10 }}>
-            <input ref={inputRef} value={newTask} onChange={e => setNewTask(e.target.value)} onKeyDown={e => e.key==="Enter"&&addTask()} placeholder="Add task..." style={{ flex: 1, padding: "6px 8px", border: "1.5px solid #e2e8f0", borderRadius: 7, fontSize: 11, outline: "none", background: "#f8fafc", color: "#0f172a" }}/>
-            <button onClick={addTask} style={{ background: "#0f172a", color: "#fff", border: "none", borderRadius: 7, padding: "0 10px", cursor: "pointer", fontSize: 14, fontWeight: 700 }}>+</button>
+
+          {/* Progress bar */}
+          <div style={{ height: 5, background: "#f1f5f9", borderRadius: 99, overflow: "hidden", marginBottom: 14 }}>
+            <div style={{ height: "100%", width: `${totalTasks?(completedTasks/totalTasks)*100:0}%`, background: "linear-gradient(90deg,#22c55e,#16a34a)", borderRadius: 99, transition: "width 0.3s" }}/>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 200, overflow: "auto" }}>
+
+          {/* Add task input */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+            <input ref={inputRef} value={newTask} onChange={e => setNewTask(e.target.value)} onKeyDown={e => e.key==="Enter"&&addTask()} placeholder="Add a task..." style={{ flex: 1, padding: "8px 10px", border: "1.5px solid #e2e8f0", borderRadius: 9, fontSize: 12, outline: "none", background: "#f8fafc", color: "#0f172a" }}/>
+            <button onClick={addTask} style={{ background: "#0f172a", color: "#fff", border: "none", borderRadius: 9, width: 34, cursor: "pointer", fontSize: 18, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+          </div>
+
+          {/* Task list */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 7, flex: 1, overflow: "auto" }}>
             {tasks.map(t => (
-              <div key={t.id} style={{ display: "flex", gap: 7, cursor: "pointer", alignItems: "flex-start", opacity: t.done?0.4:1 }}>
-                <div onClick={() => setTasks(prev => prev.map(x => x.id===t.id?{...x,done:!x.done}:x))} style={{ width: 14, height: 14, borderRadius: 4, border: `2px solid ${t.done?"#22c55e":"#e2e8f0"}`, background: t.done?"#22c55e":"transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {t.done && <span style={{ fontSize: 9, color: "#fff" }}>✓</span>}
+              <div key={t.id} style={{ display: "flex", alignItems: "flex-start", gap: 9, padding: "9px 11px", background: t.done?"#f0fdf4":"#f8fafc", border: `1px solid ${t.done?"#bbf7d0":"#e2e8f0"}`, borderRadius: 10, transition: "all 0.15s" }}>
+                <div onClick={() => setTasks(prev => prev.map(x => x.id===t.id?{...x,done:!x.done}:x))} style={{ width: 17, height: 17, borderRadius: 5, border: `2px solid ${t.done?"#22c55e":"#d1d5db"}`, background: t.done?"#22c55e":"#fff", flexShrink: 0, marginTop: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
+                  {t.done && <span style={{ fontSize: 10, color: "#fff", fontWeight: 800 }}>✓</span>}
                 </div>
-                <span style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5, flex: 1, textDecoration: t.done?"line-through":"none" }}>{t.text}</span>
-                <button onClick={() => setTasks(prev => prev.filter(x => x.id!==t.id))} style={{ background: "none", border: "none", color: "#e2e8f0", cursor: "pointer", fontSize: 13, padding: 0 }}>×</button>
+                <span style={{ fontSize: 12, color: t.done?"#86efac":"#374151", flex: 1, lineHeight: 1.5, textDecoration: t.done?"line-through":"none" }}>{t.text}</span>
+                <button onClick={() => setTasks(prev => prev.filter(x => x.id!==t.id))} style={{ background: "none", border: "none", color: "#cbd5e1", cursor: "pointer", fontSize: 15, padding: 0, lineHeight: 1, flexShrink: 0 }}>×</button>
               </div>
             ))}
-            {tasks.length === 0 && <div style={{ textAlign: "center", color: "#e2e8f0", fontSize: 12, padding: "10px 0" }}>No tasks 🎉</div>}
+            {tasks.length === 0 && <div style={{ textAlign: "center", color: "#cbd5e1", fontSize: 12, padding: "12px 0" }}>All done 🎉</div>}
           </div>
         </div>
       </div>
 
-      {/* Row 3: Flags */}
+      {/* Flags */}
       {handoff.flags && handoff.flags.length > 0 && (
         <div style={card}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>⚠️ Flags</div>
+          <div style={label}>⚠️ Flags</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {handoff.flags.map((f,i) => (
-              <div key={i} style={{ fontSize: 12, color: "#374151", padding: "10px 14px", background: "#fffbeb", border: "1px solid #fde68a", borderLeft: "3px solid #f59e0b", borderRadius: 10 }}>{f}</div>
+              <div key={i} style={{ fontSize: 12, color: "#374151", padding: "10px 14px", background: "#fffbeb", border: "1px solid #fde68a", borderLeft: "3px solid #f59e0b", borderRadius: 10, lineHeight: 1.5 }}>{f}</div>
             ))}
           </div>
         </div>
@@ -293,7 +294,7 @@ export default function Dashboard({ events: initialEvents, handoff }) {
 
       {/* Add Event Modal */}
       {addEventOpen && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setAddEventOpen(false)}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.25)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setAddEventOpen(false)}>
           <div onClick={e => e.stopPropagation()} style={{ background: "#fff", borderRadius: 20, padding: 28, width: 380, boxShadow: "0 20px 60px rgba(0,0,0,0.12)", border: "1px solid #e2e8f0" }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 20 }}>Add Event</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
