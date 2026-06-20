@@ -111,7 +111,7 @@ export default function Dashboard({ events: initialEvents, handoff }) {
       </div>
 
       {/* Row 1: Calendar + right column */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "0.75fr 1.25fr", gap: 16, marginBottom: 16 }}>
 
         {/* Calendar */}
         <div style={card}>
@@ -133,7 +133,7 @@ export default function Dashboard({ events: initialEvents, handoff }) {
               const hasExam = evts.some(e => e.type === "Assessment");
               return (
                 <div key={dateStr} onClick={() => setSelected(dateStr)} style={{
-                  borderRadius: 10, padding: "7px 3px 5px", minHeight: 50, cursor: "pointer", position: "relative",
+                  borderRadius: 10, padding: "7px 3px 5px", minHeight: 42, cursor: "pointer", position: "relative",
                   background: isSel ? "#0f172a" : isToday ? "#eff6ff" : "#f8fafc",
                   border: isToday&&!isSel ? "1.5px solid #bfdbfe" : "1.5px solid transparent",
                   boxShadow: isSel ? "0 4px 12px rgba(15,23,42,0.18)" : "none",
